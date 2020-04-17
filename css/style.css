@@ -1,0 +1,101 @@
+@charset "UTF-8";
+
+#game {
+    padding: 15px 15px;
+    font-size: 18px;
+    text-align: center;
+    cursor: pointer;
+    outline: none;
+    color: #fff;
+    background-color: #4CAF50;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+  }
+  
+  #game:hover {background-color: #3e8e41}
+  
+  #game:active {
+    background-color: #3e8e41;
+    box-shadow: 0 5px #666;
+    transform: translateY(4px);
+  }
+
+
+.game-page
+{
+   background-repeat: no-repeat;
+   background-size:100%;
+   bottom: 0;
+   color: black;
+   left: 0;
+   overflow: auto;
+   padding: 3em;
+   position: absolute;
+   right: 0;
+   text-align: center;
+   top: 0;
+   background-size: cover;
+}
+@media (min-width: 768px) {
+    .game-page
+{
+    background-repeat: no-repeat;
+    bottom: 0;
+    color: black;
+    left: 0;
+    overflow: auto;
+    padding: 3em;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+
+
+}
+}
+
+@media (min-width: 992px) {
+  .game-page
+{
+    background-repeat: no-repeat;
+    bottom: 0;
+    color: black;
+    left: 0;
+    overflow: auto;
+    padding: 3em;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+
+
+}
+}
+
+@media (min-width: 1200px) {
+   .game-page
+{
+    background-repeat: no-repeat;
+    bottom: 0;
+    color: black;
+    left: 0;
+    overflow: auto;
+    padding: 3em;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+
+
+}
+}

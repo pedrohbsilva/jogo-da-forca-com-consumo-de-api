@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang=pt-br dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+
+		<link rel="stylesheet" href="css/style.css" >
+
+  </head>
+  <body>
+
+      <div align="center" class=game-page>
+
+       <p id="sorte"></p>
+       <input id="produto" onkeyup="inserir();" style="width:30px; font-size:15px" maxlength="1" size="1"> Inserir a letra
+       </p>
+       <div id="Inputs" align="center"></div>
+       <table id="tables" align="center"></table>
+       <p><img  id="img" src="img/0.gif" alt="Jogo da forca"></p>
+       <button onClick="obterPalavra();" id="game">Tentar outra palavra</button>
+       
+      </div>
+         <style>
+           td{width:20px; font-size:30px; display: inline; padding-left: 10px;}
+         </style>
+
+   <script type="text/javascript">
+     var xhttp = new XMLHttpRequest();
+     xhttp.open("GET", "https://api.dicionario-aberto.net/random", true);
+     xhttp.send();
+     xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var txt = this.responseText;
+        var obj = JSON.parse(txt);
+        // Palavra aleatória
+        const palavra = {
+            palavra: obj.word,
+        }
+        window.localStorage.setItem('palavra', JSON.stringify(palavra));
+      }
+     };
+     palavra = JSON.parse(window.localStorage.getItem('palavra'));
+     var palavraSorteada = palavra.palavra.normalize('NFD').replace(/([\u0300-\u036f]|[^0-9a-zA-Z\s])/g, '');
+     var xhttp = new XMLHttpRequest();
+     xhttp.open("GET", `https://api.dicionario-aberto.net/word/${palavra.palavra}`, true);
+     xhttp.send();
+     xhttp.onreadystatechange = function() {
+      if (this.readyState == 4 && this.status == 200) {
+        var txt = this.responseText;
+        var obj = JSON.parse(txt);
+        var xml = obj[0].xml;
+        parser = new DOMParser();
+        xmlDoc = parser.parseFromString(xml,"text/xml");
+        dica = xmlDoc.getElementsByTagName("def")[0].childNodes[0].nodeValue
+        
+        console.log(dica);
+        window.localStorage.setItem('dica', JSON.stringify(dica));
+      }
+     };
+     dica = JSON.parse(window.localStorage.getItem('dica'));
+     //Armazenar as dicas
+     var letras = [];
+     var tabelas = new Array("a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s"
+     , "t", "u", "v", "w", "x", "y", "z");
+     //Contadores
+     var i = 0;
+     var k = 0;
+     var l = 0;
+     // Campo para fazer a contagem das letras da palavra e dar a dica da palavra ao jogador.
+     document.getElementById("sorte").innerHTML = "<p>" +"A palavra tem " + palavraSorteada.length +" letras." +" A dica da palavra: "+dica + "</p>";
+
+    //Loop para exibir as letras separadas em tabelas.
+    for (i = 0; i < tabelas.length; i++)
+    {
+        let totalLetras = document.createElement("td"); // Variável para criar as tables aonde estão as letras
+        totalLetras.disabled = "tables";  // Campo para tornar os tables desabilitados.
+        totalLetras.innerHTML=tabelas[i];   // Campo para escrever as letras da tabela.
+        totalLetras.id=tabelas[i];
+        tables.appendChild(totalLetras); // Função usada para designar atividades para cada inputs
+    }
+    //Loop para criar inputs igual ao tamanho da palavra selecionada aleatoriamente.
+    for (i = 0; i < palavraSorteada.length; i++)
+    {
+        let campo = document.createElement("td"); // Variável para criar inputs
+        campo.innerHTML = " _ ";
+        campo.id=[i+1];   // Campo para dar nome aos "id" de acordo com a numeração.
+        Inputs.appendChild(campo); // Função usada para designar atividades para cada inputs.
+    }
+     function obterPalavra () // Função para recarregar a página e adquirir outra palavra.
+     {
+         window.location.reload();
+     }
+     document.addEventListener('keypress', function(e)//Função para inserir a letra automática no input.
+     {
+        if(e.which == 13)
+        {
+         inserir();//Faz a função inserir se ativar, quando apertar a tecla Enter(13)
+        }
+     }, false);
+
+     function inserir ()   // Função para inserir a letra para associar aos inputs.
+       {
+         var letra = document.getElementById('produto').value;// Recebe a letra.
+         var validarEntrada=/[A-Za-zÀ-ú]/g; // Variável que impede outros caracters.
+         var verificarLetra = palavraSorteada.indexOf(letra); // Faz uma pesquisa na palavra sorteada e verifica se a letra digitada está em alguma posição.
+
+         if(!validarEntrada.test(letra)) return false;//Condição que impede caracteres de outros tipos
+         document.getElementById('produto').value = ''; //Limpa a letra do input.
+
+         if(!letraExiste(letra))
+         {
+           letras.push(letra);//Sempre que a letra for inserida, irá fazer uma verificação.
+         }
+         else
+         {
+           return alert("Essa letra já foi digitada anteriormente.");
+         }
+
+         if(verificarLetra == (-1))
+         {
+           k++;//Contador que irá definir quando irá perder
+           document.getElementById('img').src = "img/"+k+".gif";//Cada vez que o contador aumentar, irá substituir pela imagem respectiva.
+           document.getElementById('produto').value = ''; //Limpa a letra do input.
+           document.getElementById(letra).style.color = "red"; //Troca a cor das letras da tabela para vermelho.
+
+           if(k == 7)
+           {
+             //Sempre que perder, o usuário poderá decidir se quer jogar de novo ou não.
+             let denovo = confirm("Você perdeu, a palavra era: "+palavraSorteada+", quer jogar de novo?");
+             if (denovo==true)
+              window.location.reload();
+             else {
+              window.location.reload();
+             }
+           }
+
+         }
+         else if(verificarLetra >= 0)
+         {
+           for (let p=0;p<palavraSorteada.length;p++) { //loop para poder designar cada letra a sua respectiva posição.
+             if (palavraSorteada[p] == letra) {
+               document.getElementById((p+1)).innerHTML = " "+letra+" "; //Irá designar as letras aos seus respectivos lugares em letras maíusculas
+               document.getElementById('produto').value = '';//Limpa a letra do input.
+               l++ //Contador para definir quando o jogador ganhar.
+             }
+           }
+           document.getElementById(letra).style.color = "#00FF00";//Troca a cor das letras da tabela para verde.
+           if(l == palavraSorteada.length)
+           {
+             //Sempre que ganhar, o usuário poderá decidir se quer jogar de novo ou não.
+             let denovo = confirm("Parabéns, você ganhou. A palavra era: "+palavraSorteada+". Quer jogar novamente?");
+             if (denovo==true)
+              window.location.reload();
+             else {
+              window.location.reload();
+             }
+           }
+         }
+       }
+       //Impede que entre a mesma letra mais de uma vez.
+       function letraExiste(letra)
+       {
+         return (letras.indexOf(letra) != -1);
+       }
+   </script>
+
+  </body>
+</html>
